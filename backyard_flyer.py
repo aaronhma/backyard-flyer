@@ -105,12 +105,13 @@ class BackyardFlyer(Drone):
 
     def landing_transition(self):
         """
-        TODO: Fill out this method
-        
-        1. Command the drone to land
-        2. Transition to the LANDING state
+        This function commands the drone
+        to land and automatically transitions
+        to the landing state.
         """
         print("landing transition")
+        self.land() # Land the drone
+        self.flight_state = States.LANDING # Set the flight state to LANDING
 
     def disarming_transition(self):
         """
