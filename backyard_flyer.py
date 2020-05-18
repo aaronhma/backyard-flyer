@@ -23,7 +23,7 @@ class BackyardFlyer(Drone):
     def __init__(self, connection):
         super().__init__(connection)
         self.target_position = np.array([0.0, 0.0, 0.0])
-        self.all_waypoints = []
+        self.trajectory = list()
         self.in_mission = True
         self.check_state = {}
 
@@ -59,13 +59,19 @@ class BackyardFlyer(Drone):
         """
         pass
 
-    def calculate_box(self):
+    def calculate_trajectory(self):
         """
-        TODO: Fill out this method
+        This function returns the trajectory
+        that allows the drone to fly in a
+        square.
+        """
+        print("Calculating trajectory...")
+        self.trajectory.append([10, 0, 3])
+        self.trajectory.append([10, 10, 3])
+        self.trajectory.append([0, 10, 3])
+        self.trajectory.append([0, 0, 3])
         
-        1. Return waypoints to fly a box
-        """
-        pass
+        return self.trajectory
 
     def arming_transition(self):
         """
