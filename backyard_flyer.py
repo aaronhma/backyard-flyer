@@ -26,6 +26,11 @@ class BackyardFlyer(Drone):
         self.trajectory = list()
         self.in_mission = True
         self.check_state = {}
+        
+        # Waypoint counter
+        self.waypoint = 0
+        self.prev_waypoint = 1
+        self.next_waypoint = 2
 
         # initial state
         self.flight_state = States.MANUAL
@@ -114,6 +119,13 @@ class BackyardFlyer(Drone):
         2. Transition to WAYPOINT state
         """
         print("waypoint transition")
+        print("current waypoint: {}, next waypoint: {}".format(self.prev_waypoint, self.next_waypoint))
+        self.prev_waypoint += 1
+        self.next_waypoint += 1
+        waypoint = self.trajectory[self.waypoint]
+        self.command(waypoint)
+        self.waypoint += 1
+        self.flight_state = States.WAYPOINT # Set the flight state to WAYPOINT
 
     def landing_transition(self):
         """
