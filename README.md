@@ -1,6 +1,8 @@
 # Flying Car: Backyard Flyer
 This repository contains code for Flying Car Nanodegree Program - Project 1: Backyard Flyer.
 
+**NOTE: With the world in quarantine, I decided to have a little fun by making this project.**
+
 ## Contents
 <!-- MarkdownTOC depth=4 -->
 - [Project: Backyard Flyer](https://github.com/aaronhma/backyard-flyer/)
