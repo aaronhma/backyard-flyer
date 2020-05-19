@@ -1,24 +1,23 @@
 import argparse
 import time
-from enum import Enum
+import enum
 
 import numpy as np
 
-from udacidrone import Drone
-from udacidrone.connection import MavlinkConnection, WebSocketConnection  # noqa: F401
-from udacidrone.messaging import MsgID
+import udacidrone
+# temporary workaround to udacidrone connection module error:
+from udacidrone.connection import MavlinkConnection # WebSocketConnection
 
-
-class States(Enum):
+class States(enum.Enum):
     MANUAL = 0
     ARMING = 1
-    TAKEOFF = 2
+    TAKEOFF = 2 
     WAYPOINT = 3
     LANDING = 4
     DISARMING = 5
 
 
-class BackyardFlyer(Drone):
+class BackyardFlyer(udacidrone.Drone):
 
     def __init__(self, connection):
         super().__init__(connection)
@@ -38,14 +37,14 @@ class BackyardFlyer(Drone):
         # initial state
         self.flight_state = States.MANUAL
 
-        # TODO: Register all your callbacks here
-        self.register_callback(MsgID.LOCAL_POSITION, self.local_position_callback)
-        self.register_callback(MsgID.LOCAL_VELOCITY, self.velocity_callback)
-        self.register_callback(MsgID.STATE, self.state_callback)
+        # Register all the callbacks for the drone
+        self.register_callback(udacidrone.messaging.MsgID.LOCAL_POSITION, self.local_position_callback)
+        self.register_callback(udacidrone.messaging.MsgID.LOCAL_VELOCITY, self.velocity_callback)
+        self.register_callback(udacidrone.messaging.MsgID.STATE, self.state_callback)
 
     def local_position_callback(self):
         """
-        This triggers when `MsgID.LOCAL_POSITION` is received and self.local_position contains new data
+        This triggers when `udacidrone.messaging.MsgID.LOCAL_POSITION` is received and self.local_position contains new data
         """
         if self.flight_state == States.TAKEOFF:
             altitude = -1.0 * self.local_position[2]
@@ -55,7 +54,7 @@ class BackyardFlyer(Drone):
 
     def velocity_callback(self):
         """
-        This triggers when `MsgID.LOCAL_VELOCITY` is received and self.local_velocity contains new data
+        This triggers when `udacidrone.messaging.MsgID.LOCAL_VELOCITY` is received and self.local_velocity contains new data
         """
         if self.flight_state == States.LANDING:
             if (self.global_position[2] - self.global_home[2] < 0.1) and abs(self.local_position[2] < 0.01):
@@ -63,7 +62,7 @@ class BackyardFlyer(Drone):
 
     def state_callback(self):
         """
-        This triggers when `MsgID.STATE` is received and self.armed and self.guided contain new data
+        This triggers when `udacidrone.messaging.MsgID.STATE` is received and self.armed and self.guided contain new data
         """
         if not self.in_mission:
             return
@@ -75,6 +74,7 @@ class BackyardFlyer(Drone):
         elif self.flight_state == States.DISARMING:
             if not self.armed:
                 self.manual_transition()
+        # TODO: create waypoint callback
 
     def calculate_trajectory(self):
         """
@@ -193,11 +193,11 @@ class BackyardFlyer(Drone):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--port', type=int, default=5760, help='Port number')
-    parser.add_argument('--host', type=str, default='127.0.0.1', help="host address, i.e. '127.0.0.1'")
+    parser.add_argument('--port', type = int, default = 5760, help = "The simulator port number")
+    parser.add_argument('--host', type = str, default = '127.0.0.1', help = "The simulator host address, i.e. '127.0.0.1'")
     args = parser.parse_args()
 
-    conn = MavlinkConnection('tcp:{0}:{1}'.format(args.host, args.port), threaded=False, PX4=False)
+    conn = MavlinkConnection('tcp:{0}:{1}'.format(args.host, args.port), threaded = False, PX4 = False)
     # conn = WebSocketConnection('ws://{0}:{1}'.format(args.host, args.port))
     drone = BackyardFlyer(conn)
     time.sleep(2)
