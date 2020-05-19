@@ -31,6 +31,9 @@ class BackyardFlyer(Drone):
         self.waypoint = 0
         self.prev_waypoint = 1
         self.next_waypoint = 2
+        
+        # Get the flight trajectory
+        self.calculate_trajectory()
 
         # initial state
         self.flight_state = States.MANUAL
@@ -132,7 +135,7 @@ class BackyardFlyer(Drone):
         self.prev_waypoint += 1
         self.next_waypoint += 1
         waypoint = self.trajectory[self.waypoint]
-        self.command(waypoint)
+        # self.command(waypoint)
         self.waypoint += 1
         self.flight_state = States.WAYPOINT # Set the flight state to WAYPOINT
 
