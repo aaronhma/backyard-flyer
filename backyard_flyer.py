@@ -60,11 +60,18 @@ class BackyardFlyer(Drone):
 
     def state_callback(self):
         """
-        TODO: Implement this method
-
         This triggers when `MsgID.STATE` is received and self.armed and self.guided contain new data
         """
-        pass
+        if not self.in_mission:
+            return
+        if self.flight_state == States.MANUAL:
+            self.arming_transition()
+        elif self.flight_state == States.ARMING:
+            if self.armed:
+                self.takeoff_transition()
+        elif self.flight_state == States.DISARMING:
+            if not self.armed:
+                self.manual_transition()
 
     def calculate_trajectory(self):
         """
